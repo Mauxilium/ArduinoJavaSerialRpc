@@ -39,11 +39,12 @@ For Maven projects, it is only required to include the following dependency in y
 <dependencies>
     <dependency>
         <groupId>it.mauxilium</groupId>
-        <artifactId>ArduinoJavaRpc</artifactId>
+        <artifactId>ArduinoJavaSerialRpc</artifactId>
         <version>${arduinorpc.version}</version>
     </dependency>
 </dependencies>
 ```
+NOTE: the maven central repository is not already available. Please clone this GitHub repository, compile it and publish into your local repository.
 
 ## Using it in Arduino Sketch
 ```c++
