@@ -33,12 +33,20 @@ public class IntegrationTest {
     private int receivingCounter = 0;
     private final Object waitResultLock = new Object();
 
-    public static void main(final String[] args) throws IOException, ArduinoRpcActionFailsException, ArduinoRpcInitializationError {
-        new IntegrationTest().doIt();
+    public static void main(final String[] args) {
+        if (args.length == 2) {
+            try {
+                new IntegrationTest().doIt(args[0], args[1]);
+            } catch (NumberFormatException | IOException | ArduinoRpcActionFailsException | ArduinoRpcInitializationError ex) {
+                System.out.println(ex.getLocalizedMessage());
+            }
+        }
+        System.out.println("\nPlease use: IntegrationTest 'port' 'baudRate'");
+        System.out.println("I.e.: IntegrationTest COM5 9600");
     }
 
-    void doIt() throws IOException, ArduinoRpcActionFailsException, ArduinoRpcInitializationError {
-        connectToArduinoCard();
+    void doIt(final String port, final String baudRate) throws IOException, ArduinoRpcActionFailsException, ArduinoRpcInitializationError {
+        connectToArduinoCard(port, Integer.parseInt(baudRate));
         verifyConnectedCard();
         arduino.executeRemoteAction("Start");
         performJavaToArduinoTest();
@@ -49,7 +57,7 @@ public class IntegrationTest {
         System.exit(0);
     }
 
-    private void connectToArduinoCard() throws ArduinoRpcInitializationError {
+    private void connectToArduinoCard(final String port, final int baudRate) throws ArduinoRpcInitializationError {
         arduino = new ArduinoRpc("COM5", 9600);
         arduino.connect();
     }

@@ -46,7 +46,7 @@ For Maven projects, it is only required to include the following dependency in y
 ```
 NOTE: the maven central repository is not already available. Please clone this GitHub repository, compile it and publish into your local repository.
 
-## Using it in Arduino Sketch
+## Arduino Sketch basic example
 ```c++
 #include <ArduinoSerialRpc.h>
 
@@ -73,7 +73,7 @@ void loop() {
 }
 ```
 
-## Using in Java Class
+## Java Class basic example
 A simplified version of Java test program could be:
 ```java
 class ArduinoRpc extends ArduinoJavaSerialRpc {
@@ -100,13 +100,21 @@ You can find a real complete use case in the source path:
 * ArduinoJavaSerialRpc\src\test\java\integration\java
 
 ### Build and run 
+Java and Arduino communication is performed by the way of RxTx external library:
+```
+(from his readme)
+RXTX binary builds provided by Mfizz Inc. (http://mfizz.com/).
+Please see http://mfizz.com/oss/rxtx-for-java for more info.
+```
+A copy of 64Bit RxTx library is added to this git repository. 
+
 In order to execute the integration example test, please follows this steps:
 * Open the sketch ArduinoJavaSerialRpc\src\test\java\integration\sketch\sketch.ino
 * Download it into your Arduino Card
 * Execute the following commands (modifying the path as your system requires)
 ```bash
-# mvn clean package
-# java -Djava.library.path=...your path...\ArduinoJavaSerialRpc\RxTx\mfz-rxtx-2.2-20081207-win-x64 integrationTest.jar
+mvn clean test
+java -Djava.library.path=RxTx\mfz-rxtx-2.2-20081207-win-x64 -cp target/test-classes;target/classes;RxTx/mfz-rxtx-2.2-20081207-win-x64/RXTXcomm.jar integration.java.IntegrationTest COM5 9600
 ```
 
 ### Next steps
