@@ -111,13 +111,13 @@ A copy of 64Bit RxTx library is added to this git repository.
 In order to execute the integration example test, please follows this steps:
 * Open the sketch ArduinoJavaSerialRpc\src\test\java\integration\sketch\sketch.ino
 * Download it into your Arduino Card
-* Execute the following commands (modifying the path as your system requires)
+* Execute the following commands
 ```bash
 mvn clean test
 java -Djava.library.path=RxTx\mfz-rxtx-2.2-20081207-win-x64 -cp target/test-classes;target/classes;RxTx/mfz-rxtx-2.2-20081207-win-x64/RXTXcomm.jar integration.java.IntegrationTest COM5 9600
 ```
 
 ### Next steps
-* ArduinoJavaSerialRpc tutorial - A tutorial to discover a more complex use of library
-* ArduinoSpring - The Spring library developed on top of ArduinoJavaSeriaRpc
-* www.mauxilium.it - The reference site for my other projects
+* ArduinoJavaSerialRpc tutorial - A tutorial to discover a more complex use of library (On Working)
+* ArduinoSpring - The Spring library developed on top of ArduinoJavaSeriaRpc (On Working)
+* www.mauxilium.it - The reference site for my other projects (On Working)
