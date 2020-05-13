@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 /**
  * This class implements a bidirectional communication with Arduino card in form
  * of RPC (Remote Procedure Call) and RMI (Remote Method Invocation) through the serial port.<br>
- * Due to resource limitations of Arduino card, only a few fixed signatures are available.
+ * Due to resource limitations of Arduino card, only a few fixed signatures are available.<br>
  * <br>
  * <b>Java to Arduino (RPC)</b><br>
  * A Java program that includes ArduinoJavaSerialRpc can call a function inside an
@@ -44,7 +44,7 @@ import java.util.logging.Logger;
  * <br>
  * For example, a legal call could be:<br>
  * <blockquote><code>libraryInstance.executeAction("writeAction", 1811, 1118);</code></blockquote>
- * <br><br>
+ * <br>
  * <b>Arduino to Java (RMI)</b><br>
  * An Arduino sketch can call a Java method without any registration, if:
  * <br>
@@ -64,15 +64,14 @@ import java.util.logging.Logger;
  * <br>
  * <b>PROJECT NOTE:</b><br>
  * Any Java project which uses ArduinoJavaSerialRpc must include also the RxTx library
- * (a copy of it may be found into: ArduinoJavaSerialRpc/Download/*).<br>
+ * (a copy of it may be found into: ArduinoJavaSerialRpc/RxTx/*).<br>
  * <b>Warning</b>: Missing the RxTx inclusion produces an execution error like:
  * <b>gnu/io/NoSuchPortException</b><br>
- * Which is hardest to refer to the unlinked library in the project composition.
  * <br>
  * <b>EXECUTION NOTE:</b><br>
  * In order to execute a Java program which includes ArduinoJavaSerialRpc, the command
  * line must includes a driver link, like:<br>
- * <b>java -Djava.library.path=.\ArduinoJavaSerialRpc\Drivers\mfz-rxtx-2.2-20081207-win-x64</b><br>
+ * <b>java -Djava.library.path=RxTx\mfz-rxtx-2.2-20081207-win-x64 -cp target/test-classes;target/classes;RxTx/mfz-rxtx-2.2-20081207-win-x64/RXTXcomm.jar integration.java.IntegrationTest COM5 9600</b>
  */
 public class ArduinoJavaSerialRpc {
 
@@ -228,6 +227,7 @@ public class ArduinoJavaSerialRpc {
      * Returns the card identification declared into the sketch
      * It is the string used as argument of ArduinoSerialRpc constructor into the sketch.
      * @return the registered card identification name
+     * @throws ArduinoRpcActionFailsException In any case of communication or function execution error.
      */
     public String getCardName() throws ArduinoRpcActionFailsException {
         return usbHandler.getCardName();
