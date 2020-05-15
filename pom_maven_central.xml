@@ -6,7 +6,28 @@
     <artifactId>ArduinoJavaSerialRpc</artifactId>
     <version>1.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
+
+    <!-- Project information -->
     <name>ArduinoJavaSerialRpc</name>
+    <description>This library implements a bidirectional communication with Arduino card in form of RPC (Remote Procedure Call) and RMI (Remote Method Invocation) through the serial port.</description>
+    <url>https://github.com/Mauxilium/ArduinoJavaSerialRpc</url>
+    <inceptionYear>2020</inceptionYear>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <organization>
+        <name>Mauxilium (Gabriele Maris)</name>
+        <url>http://www.mauxilium.it</url>
+    </organization>
+    <developers>
+        <developer>
+            <name>Gabriele Maris</name>
+        </developer>
+    </developers>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
