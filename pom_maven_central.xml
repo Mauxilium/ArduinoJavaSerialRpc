@@ -245,9 +245,10 @@
     </distributionManagement>
 
     <scm>
-        <connection>scm:git:git://github.com/dexecutor/dependent-tasks-executor.git</connection>
-        <developerConnection>scm:git:git@github.com:dexecutor/dexecutor.git</developerConnection>
-        <url>https://github.com/dexecutor/dependent-tasks-executor</url>
+        <connection>scm:git:git://github.com/Mauxilium/ArduinoJavaSerialRpc.git</connection>
+        <developerConnection>scm:git:ssh://github.com:Mauxilium/ArduinoJavaSerialRpc.git</developerConnection>
+        <url>http://github.com/Mauxilium/ArduinoJavaSerialRpc/tree/master</url>
         <tag>ArduinoJavaSerialRpc-1.0.0</tag>
     </scm>
+
 </project>
