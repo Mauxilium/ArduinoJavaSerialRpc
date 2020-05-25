@@ -13,17 +13,17 @@
 package integration.java;
 
 import it.mauxilium.arduinojavaserialrpc.ArduinoJavaSerialRpc;
-import it.mauxilium.arduinojavaserialrpc.exception.ArduinoRpcActionFailsException;
+import it.mauxilium.arduinojavaserialrpc.exception.ArduinoRpcJavaFailsException;
 import it.mauxilium.arduinojavaserialrpc.exception.ArduinoRpcInitializationError;
 
 import java.io.IOException;
 
 public class IntegrationTest {
 
-    // String assigned to ArduinoRpc instance inside the sketch
+    // String assigned to ArduinoSerialRpc instance inside the sketch
     private final static String EXPECTED_SKETCH = "Full Tutorial Sketch (www.mauxilium.it)";
 
-    // Values registered as placeholder during sketch setup (registerArduinoAction)
+    // Values registered as placeholder during sketch setup (registerArduinoFunction)
     private final static String FLOAT_CALL_PC_TO_ARDUINO = "FloatCallPcToArduino";
     private final static String STRING_CALL_PC_TO_ARDUINO = "StringCallPcToArduino";
     private final static String INTEGER_CALL_PC_TO_ARDUINO = "IntCallPcToArduino";
@@ -37,7 +37,7 @@ public class IntegrationTest {
         if (args.length == 2) {
             try {
                 new IntegrationTest().doIt(args[0], args[1]);
-            } catch (NumberFormatException | IOException | ArduinoRpcActionFailsException | ArduinoRpcInitializationError ex) {
+            } catch (NumberFormatException | IOException | ArduinoRpcJavaFailsException | ArduinoRpcInitializationError ex) {
                 System.out.println(ex.getLocalizedMessage());
             }
         }
@@ -45,14 +45,14 @@ public class IntegrationTest {
         System.out.println("I.e.: IntegrationTest COM5 9600");
     }
 
-    void doIt(final String port, final String baudRate) throws IOException, ArduinoRpcActionFailsException, ArduinoRpcInitializationError {
+    void doIt(final String port, final String baudRate) throws IOException, ArduinoRpcJavaFailsException, ArduinoRpcInitializationError {
         connectToArduinoCard(port, Integer.parseInt(baudRate));
         verifyConnectedCard();
-        arduino.executeRemoteAction("Start");
+        arduino.executeRemoteFunction("Start");
         performJavaToArduinoTest();
-        arduino.executeRemoteAction("Switch");
+        arduino.executeRemoteFunction("Switch");
         waitReceivingTestCompleted();
-        arduino.executeRemoteAction("Stop");
+        arduino.executeRemoteFunction("Stop");
         evaluateTestResult();
         System.exit(0);
     }
@@ -62,7 +62,7 @@ public class IntegrationTest {
         arduino.connect();
     }
 
-    private void verifyConnectedCard() throws IOException, ArduinoRpcActionFailsException {
+    private void verifyConnectedCard() throws ArduinoRpcJavaFailsException {
         String cardName = arduino.getCardName();
         if (EXPECTED_SKETCH.equals(cardName) == false) {
             System.out.println("Invalid card. Found \""+cardName+"\" instead of expected \""+EXPECTED_SKETCH+"\"");
@@ -75,9 +75,9 @@ public class IntegrationTest {
     private void performJavaToArduinoTest() {
         System.out.println("\nPc to Arduino test:");
 
-        String report = "";
+        StringBuilder report = new StringBuilder();
         for (int cicle=1; cicle < 4; cicle++) {
-            report = report + performJavaToArduinoTest(cicle);
+            report.append(performJavaToArduinoTest(cicle));
         }
 
         if (report.length() > 0) {
@@ -111,25 +111,25 @@ public class IntegrationTest {
         String result = "";
         try {
             return sendExecution(cicle);
-        } catch (ArduinoRpcActionFailsException e) {
+        } catch (ArduinoRpcJavaFailsException e) {
             return e.getLocalizedMessage();
         }
     }
 
-    String sendExecution(final int cicle) throws ArduinoRpcActionFailsException {
-        System.out.println("\tExec "+ STRING_CALL_PC_TO_ARDUINO +" with index: "+cicle);
-        final String stringExpected = String.valueOf(cicle) + String.valueOf(cicle) + String.valueOf(cicle);
-        String stringResp = arduino.executeRemoteAction(STRING_CALL_PC_TO_ARDUINO, String.valueOf(cicle));
+    String sendExecution(final int iterationIndex) throws ArduinoRpcJavaFailsException {
+        System.out.println("\tExec "+ STRING_CALL_PC_TO_ARDUINO +" with index: "+iterationIndex);
+        final String stringExpected = iterationIndex + String.valueOf(iterationIndex) + iterationIndex;
+        String stringResp = arduino.executeRemoteFunction(STRING_CALL_PC_TO_ARDUINO, String.valueOf(iterationIndex));
         System.out.println("\t\tResult: "+stringResp+"; Expected: "+stringExpected);
 
-        System.out.println("\tExec "+ INTEGER_CALL_PC_TO_ARDUINO +" with index: "+cicle);
-        final int intExpected = (cicle + 18)*cicle;
-        int intResp = arduino.executeRemoteAction(INTEGER_CALL_PC_TO_ARDUINO, cicle, cicle + 18);
+        System.out.println("\tExec "+ INTEGER_CALL_PC_TO_ARDUINO +" with index: "+iterationIndex);
+        final int intExpected = (iterationIndex + 18)*iterationIndex;
+        int intResp = arduino.executeRemoteFunction(INTEGER_CALL_PC_TO_ARDUINO, iterationIndex, iterationIndex + 18);
         System.out.println("\t\tResult: "+intResp+"; Expected: "+intExpected);
 
-        System.out.println("\tExec "+ FLOAT_CALL_PC_TO_ARDUINO +" with index: "+cicle);
-        final float floatExpected = (float)(3.1*cicle);
-        float floatResp = arduino.executeRemoteAction(FLOAT_CALL_PC_TO_ARDUINO, (float)1.0*cicle);
+        System.out.println("\tExec "+ FLOAT_CALL_PC_TO_ARDUINO +" with index: "+iterationIndex);
+        final float floatExpected = (float)(3.1*iterationIndex);
+        float floatResp = arduino.executeRemoteFunction(FLOAT_CALL_PC_TO_ARDUINO, (float)1.0*iterationIndex);
         System.out.println("\t\tResult: "+floatResp+"; Expected: "+floatExpected);
         System.out.println("");
 

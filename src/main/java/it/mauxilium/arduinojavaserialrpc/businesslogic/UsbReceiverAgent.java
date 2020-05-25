@@ -9,11 +9,11 @@ package it.mauxilium.arduinojavaserialrpc.businesslogic;
 import gnu.io.SerialPortEvent;
 import gnu.io.SerialPortEventListener;
 import it.mauxilium.arduinojavaserialrpc.ArduinoJavaSerialRpc;
-import it.mauxilium.arduinojavaserialrpc.exception.ArduinoRpcActionFailsException;
+import it.mauxilium.arduinojavaserialrpc.exception.ArduinoRpcJavaFailsException;
+import it.mauxilium.arduinojavaserialrpc.exception.ArduinoRpcCardException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.rmi.RemoteException;
 
 /**
  *
@@ -42,7 +42,7 @@ class UsbReceiverAgent extends Thread implements SerialPortEventListener {
         if (spe.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
             try {
                 handleReceivingData();
-            } catch (IOException | ArduinoRpcActionFailsException ex) {
+            } catch (IOException | ArduinoRpcJavaFailsException | ArduinoRpcCardException ex) {
                 if ("Underlying input stream returned zero bytes".equals(ex.getMessage()) == false) {
                     controller.handlerReceivingException(ex);
                     callingResult = null;
@@ -59,7 +59,7 @@ class UsbReceiverAgent extends Thread implements SerialPortEventListener {
         }
     }
 
-    private void handleReceivingData() throws IOException, ArduinoRpcActionFailsException {
+    private void handleReceivingData() throws IOException, ArduinoRpcJavaFailsException, ArduinoRpcCardException {
         if (input.ready()) {
             String receivedPreamble = input.readLine();
             switch (receivedPreamble) {
@@ -70,7 +70,7 @@ class UsbReceiverAgent extends Thread implements SerialPortEventListener {
                     parsingResult();
                     break;
                 case ERROR_PREAMBLE:
-                    throw new RemoteException(input.readLine());
+                    throw new ArduinoRpcCardException(input.readLine());
                 case MESSAGE_PREAMBLE:
                     System.out.println("Arduino message: " + input.readLine());
                     break;

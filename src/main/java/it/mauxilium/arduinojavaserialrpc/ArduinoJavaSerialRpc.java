@@ -10,7 +10,7 @@ import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 import gnu.io.UnsupportedCommOperationException;
 import it.mauxilium.arduinojavaserialrpc.businesslogic.UsbHandler;
-import it.mauxilium.arduinojavaserialrpc.exception.ArduinoRpcActionFailsException;
+import it.mauxilium.arduinojavaserialrpc.exception.ArduinoRpcJavaFailsException;
 import it.mauxilium.arduinojavaserialrpc.exception.ArduinoRpcInitializationError;
 
 import java.io.IOException;
@@ -30,8 +30,8 @@ import java.util.logging.Logger;
  * <blockquote>
  * <ol>
  * <li>The sketch includes the ArduinoSerialRpc library: "<code>#include &lt;ArduinoSerialRpc.h&gt;</code>"</li>
- * <li>The sketch function is registered using the "registerArduinoAction" method.</li>
- * <li>The registered function have one of the following signatures:<br>
+ * <li>The sketch function is registered using the "registerArduinoFunction" method.</li>
+ * <li>The sketch registered function have one of the following signatures:<br>
  * <ul>
  * <li>void <i>methodName</i>();</li>
  * <li>int <i>methodName</i>(int arg1, int arg2);</li>
@@ -43,7 +43,11 @@ import java.util.logging.Logger;
  * </blockquote>
  * <br>
  * For example, a legal call could be:<br>
- * <blockquote><code>libraryInstance.executeAction("writeAction", 1811, 1118);</code></blockquote>
+ * <blockquote><code>
+ *     libraryInstance = new ArduinoRpc("COM5", 9600);
+ *     libraryInstance.connect();
+ *     libraryInstance.executeRemoteFunction("writeAction", 1811, 1118);
+ * </code></blockquote>
  * <br>
  * <b>Arduino to Java (RMI)</b><br>
  * An Arduino sketch can call a Java method without any registration, if:
@@ -62,6 +66,12 @@ import java.util.logging.Logger;
  * </ol>
  * </blockquote><br>
  * <br>
+ * For example, a legal sketch could be:<br>
+ * <blockquote><code>
+ *    ArduinoSerialRpc rpc("My Arduino");
+ *    rpc.executeRemoteMethod("printArduinoText", "Hello from Arduino");
+ *  </code></blockquote>
+ *  <br>
  * <b>PROJECT NOTE:</b><br>
  * Any Java project which uses ArduinoJavaSerialRpc must include also the RxTx library
  * (a copy of it may be found into: ArduinoJavaSerialRpc/RxTx/*).<br>
@@ -147,42 +157,20 @@ public class ArduinoJavaSerialRpc {
 
     /**
      * Creates a connector to Arduino card.<br>
-     * The constructor requires two parameter:<br>
-     * The port name, which syntax depends from the operating system in use.<br>
-     * The baud rate, which depends from the sketch setup().<br>
-     * Frequently used values are declared in the PORTs constants (like
-     * LINUX_DEFAULT_PORT) and DATA_RATE constants.
-     * <br>
-     * NOTE:<br>
+     * The constructor requires two parameters, frequently used values are declared in the PORTs constants (like
+     * LINUX_DEFAULT_PORT) and DATA_RATE constants.<br>
      * This constructor instantiates the resource only, to establish a physical
-     * connection with the card a "connect()" invocation is required.
-     *
-     * @param portName The name of connection port; i.e. "COM1";
-     * @param baudRate The value for Serial port speed;
+     * connection with the card a "connect()" invocation is required.<br>
+     * @param portName The name of connection port; His syntax depends from the operating system in use.
+     * @param baudRate The value for Serial port speed; His value must be the same of Serial.begin value in the sketch.
      */
     public ArduinoJavaSerialRpc(final String portName, final int baudRate) {
         usbHandler = new UsbHandler(portName, baudRate);
     }
 
     /**
-     * Returns the used USB port name
-     * @return one of the legal values like "/dev/ttyUSB0" or "COM4"
-     */
-    public String getPortName() {
-        return usbHandler.getPortName();
-    }
-
-    /**
-     * Returns the used baud rate
-     * @return one of the legal values like DATA_RATE_300 or DATA_RATE_9600
-     */
-    public int getBaudRate() {
-        return usbHandler.getBaudRate();
-    }
-
-    /**
      * Creates a connection with the Arduino card.<br>
-     * After this calls the USB port is locked and no other programs can use it.<br>
+     * After this calls the USB port is locked and no other program can use it.<br>
      * In order to release the USB port a "disconnect()" call is required.
      *
      * @throws ArduinoRpcInitializationError In any case of connection or
@@ -224,27 +212,44 @@ public class ArduinoJavaSerialRpc {
     }
 
     /**
+     * Returns the used USB port name
+     * @return one of the legal values like "/dev/ttyUSB0" or "COM4"
+     */
+    public String getPortName() {
+        return usbHandler.getPortName();
+    }
+
+    /**
+     * Returns the used baud rate
+     * @return one of the legal values like DATA_RATE_300 or DATA_RATE_9600
+     */
+    public int getBaudRate() {
+        return usbHandler.getBaudRate();
+    }
+
+
+    /**
      * Returns the card identification declared into the sketch
      * It is the string used as argument of ArduinoSerialRpc constructor into the sketch.
      * @return the registered card identification name
-     * @throws ArduinoRpcActionFailsException In any case of communication or function execution error.
+     * @throws ArduinoRpcJavaFailsException In any case of communication error or java side problems.
      */
-    public String getCardName() throws ArduinoRpcActionFailsException {
+    public String getCardName() throws ArduinoRpcJavaFailsException {
         return usbHandler.getCardName();
     }
 
     /**
-     * Executes a function (of Arduino sketch) with signature: void <i>actionName</i>();.<br>
+     * Executes a function (of Arduino sketch) with signature: void <i>functionName</i>();.<br>
      *
-     * @param actionName The name of Arduino's function to call.
-     * @throws ArduinoRpcActionFailsException In any case of communication or function execution error.
+     * @param functionName The name of Arduino's function to call.
+     * @throws ArduinoRpcJavaFailsException In any case of communication error or java side problems.
      */
-    public void executeRemoteAction(final String actionName) throws ArduinoRpcActionFailsException {
-        usbHandler.executeAction(actionName);
+    public void executeRemoteFunction(final String functionName) throws ArduinoRpcJavaFailsException {
+        usbHandler.executeFunction(functionName);
     }
 
     /**
-     * Executes a function (of Arduino sketch) with signature: int <i>actionName</i>(int arg1, int arg2);
+     * Executes a function (of Arduino sketch) with signature: int <i>functionName</i>(int arg1, int arg2);
      * <br><br>
      * For example:<br>
      * <br>
@@ -262,7 +267,7 @@ public class ArduinoJavaSerialRpc {
      * }<br>
      * <br>
      * // Callable method from Java program.<br>
-     * // Java executes: libraryInstance.executeAction("setLightIntensity", 2, 132);<br>
+     * // Java executes: libraryInstance.executeRemoteFunction("setLightIntensity", 2, 132);<br>
      * boolean setBrightness(int pin, int value) {
      * <blockquote>
      * if ((pin == 2) || (pin == 3)) {
@@ -278,45 +283,45 @@ public class ArduinoJavaSerialRpc {
      * </blockquote>
      * }<br></blockquote>
      *
-     * @param actionName The name of function to call, in Arduino sketch.
+     * @param functionName The name of function to call, in Arduino sketch.
      * @param arg1 First value to send.
      * @param arg2 Second value to send.
      * @return The result of called function;
-     * @throws ArduinoRpcActionFailsException In any case of communication or function execution error.
+     * @throws ArduinoRpcJavaFailsException In any case of communication error or java side problems.
      */
-    public Integer executeRemoteAction(final String actionName, final int arg1, final int arg2)
-            throws ArduinoRpcActionFailsException {
-        return usbHandler.executeAction(actionName, arg1, arg2);
+    public Integer executeRemoteFunction(final String functionName, final int arg1, final int arg2)
+            throws ArduinoRpcJavaFailsException {
+        return usbHandler.executeFunction(functionName, arg1, arg2);
     }
 
     /**
-     * Executes a function (of Arduino sketch) with signature: string <i>actionName</i>(string);
+     * Executes a function (of Arduino sketch) with signature: string <i>functionName</i>(string);
      * <br><br>
      *
-     * @param actionName The name of function to call, in Arduino sketch.
+     * @param functionName The name of function to call, in Arduino sketch.
      * @param argument The parameter to send
      * @return The result of called function
-     * @throws ArduinoRpcActionFailsException In any case of communication or method execution error.
+     * @throws ArduinoRpcJavaFailsException In any case of communication error or java side problems.
      */
-    public String executeRemoteAction(final String actionName, final String argument) throws ArduinoRpcActionFailsException {
-        return usbHandler.executeAction(actionName, argument);
+    public String executeRemoteFunction(final String functionName, final String argument) throws ArduinoRpcJavaFailsException {
+        return usbHandler.executeFunction(functionName, argument);
     }
 
     /**
-     * Executes a method (of Arduino sketch) with signature: float <i>actionName</i>(float);
+     * Executes a method (of Arduino sketch) with signature: float <i>functionName</i>(float);
      * <br><br>
      *
-     * @param actionName The name of function to call, in Arduino sketch.
+     * @param functionName The name of function to call, in Arduino sketch.
      * @param argument The parameter to send
      * @return The result of called function
-     * @throws ArduinoRpcActionFailsException In any case of communication or function execution error
+     * @throws ArduinoRpcJavaFailsException In any case of communication error or java side problems
      */
-    public float executeRemoteAction(final String actionName, final float argument) throws ArduinoRpcActionFailsException {
-        return usbHandler.executeAction(actionName, argument);
+    public float executeRemoteFunction(final String functionName, final float argument) throws ArduinoRpcJavaFailsException {
+        return usbHandler.executeFunction(functionName, argument);
     }
 
     /**
-     * Overridable function called when an exception occurs receiving a message from Arduino.
+     * Overridable function called when an exception occurs during data reads from Arduino.
      *
      * @param ex The occurred exception
      */
@@ -327,88 +332,88 @@ public class ArduinoJavaSerialRpc {
     /**
      * Discovers and executes a method of the extending class.
      *
-     * @param actionToDo the name of method to be called
-     * @throws ArduinoRpcActionFailsException generated in case of execution errors
+     * @param methodToDo the name of method to be called
+     * @throws ArduinoRpcJavaFailsException In any case of communication error or java side problems
      */
-    public void executeLocalAction(final String actionToDo) throws ArduinoRpcActionFailsException {
+    public void executeLocalMethod(final String methodToDo) throws ArduinoRpcJavaFailsException {
         Method howToRun;
         try {
-            howToRun = this.getClass().getMethod(actionToDo);
+            howToRun = this.getClass().getMethod(methodToDo);
         } catch (NoSuchMethodException | SecurityException ex) {
-            throw new ArduinoRpcActionFailsException(ex);
+            throw new ArduinoRpcJavaFailsException(ex);
         }
         try {
             howToRun.invoke(this);
         } catch (IllegalAccessException | IllegalArgumentException |
                 InvocationTargetException ex) {
-            throw new ArduinoRpcActionFailsException(ex);
+            throw new ArduinoRpcJavaFailsException(ex);
         }
     }
 
     /**
      * Discovers and executes a method of the extending class.
      *
-     * @param actionToDo the name of method to be called
+     * @param methodToDo the name of method to be called
      * @param arg1 the first input parameter
      * @param arg2 the second input parameter
-     * @throws ArduinoRpcActionFailsException generated in case of execution errors
+     * @throws ArduinoRpcJavaFailsException In any case of communication error or java side problems
      */
-    public void executeLocalAction(final String actionToDo, final int arg1, final int arg2) throws ArduinoRpcActionFailsException {
+    public void executeLocalMethod(final String methodToDo, final int arg1, final int arg2) throws ArduinoRpcJavaFailsException {
         Method howToRun;
         try {
-            howToRun = this.getClass().getMethod(actionToDo, Integer.class, Integer.class);
+            howToRun = this.getClass().getMethod(methodToDo, Integer.class, Integer.class);
         } catch (NoSuchMethodException | SecurityException ex) {
-            throw new ArduinoRpcActionFailsException(ex);
+            throw new ArduinoRpcJavaFailsException(ex);
         }
         try {
             howToRun.invoke(this, arg1, arg2);
         } catch (IllegalAccessException | IllegalArgumentException |
                 InvocationTargetException ex) {
-            throw new ArduinoRpcActionFailsException(ex);
+            throw new ArduinoRpcJavaFailsException(ex);
         }
     }
 
     /**
      * Discovers and executes a method of the extending class.
      *
-     * @param actionToDo the name of method to be called
+     * @param methodToDo the name of method to be called
      * @param arg the input parameter
-     * @throws ArduinoRpcActionFailsException generated in case of execution errors
+     * @throws ArduinoRpcJavaFailsException In any case of communication error or java side problems
      */
-    public void executeLocalAction(final String actionToDo, final String arg) throws ArduinoRpcActionFailsException {
+    public void executeLocalMethod(final String methodToDo, final String arg) throws ArduinoRpcJavaFailsException {
         Method howToRun;
         try {
-            howToRun = this.getClass().getMethod(actionToDo, String.class);
+            howToRun = this.getClass().getMethod(methodToDo, String.class);
         } catch (NoSuchMethodException | SecurityException ex) {
-            throw new ArduinoRpcActionFailsException(ex);
+            throw new ArduinoRpcJavaFailsException(ex);
         }
         try {
             howToRun.invoke(this, arg);
         } catch (IllegalAccessException | IllegalArgumentException |
                 InvocationTargetException ex) {
-            throw new ArduinoRpcActionFailsException(ex);
+            throw new ArduinoRpcJavaFailsException(ex);
         }
     }
 
     /**
      * Discovers and executes a method of the extending class.
      *
-     * @param actionToDo the name of method to be called
+     * @param methodToDo the name of method to be called
      * @param arg the input parameter
-     * @throws ArduinoRpcActionFailsException generated in case of execution errors
+     * @throws ArduinoRpcJavaFailsException In any case of communication error or java side problems
      */
-    public void executeLocalAction(final String actionToDo, final float arg) throws ArduinoRpcActionFailsException {
+    public void executeLocalMethod(final String methodToDo, final float arg) throws ArduinoRpcJavaFailsException {
         Method howToRun;
         try {
-            howToRun = this.getClass().getMethod(actionToDo, Float.class);
+            howToRun = this.getClass().getMethod(methodToDo, Float.class);
         } catch (NoSuchMethodException | SecurityException ex) {
-            throw new ArduinoRpcActionFailsException(ex);
+            throw new ArduinoRpcJavaFailsException(ex);
         }
         try {
             howToRun.invoke(this, arg);
         } catch (IllegalAccessException | IllegalArgumentException |
                 InvocationTargetException ex) {
-            throw new ArduinoRpcActionFailsException(ex);
+            throw new ArduinoRpcJavaFailsException(ex);
         }
     }
 

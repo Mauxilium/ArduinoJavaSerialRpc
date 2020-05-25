@@ -21,13 +21,13 @@ ArduinoSerialRpc rpc("Full Tutorial Sketch (www.mauxilium.it)");
 void setup() {
   Serial.begin(9600);
 
-  rpc.registerArduinoAction("Start", testStart);
-  rpc.registerArduinoAction("Switch", testSwitch);
-  rpc.registerArduinoAction("Stop", testStop);
+  rpc.registerArduinoFunction("Start", testStart);
+  rpc.registerArduinoFunction("Switch", testSwitch);
+  rpc.registerArduinoFunction("Stop", testStop);
 
-  rpc.registerArduinoAction("FloatCallPcToArduino", floatCall);
-  rpc.registerArduinoAction("StringCallPcToArduino", stringCall);
-  rpc.registerArduinoAction("IntCallPcToArduino", intCall);
+  rpc.registerArduinoFunction("FloatCallPcToArduino", floatCall);
+  rpc.registerArduinoFunction("StringCallPcToArduino", stringCall);
+  rpc.registerArduinoFunction("IntCallPcToArduino", intCall);
 }
 
 void serialEvent() {
@@ -67,11 +67,11 @@ void loop() {
   delay(10);
   if (sendingTestActive) {
     if (++sendIndex < 4) {
-      rpc.executeRemoteAction("stringCallArduinoToPc", String(13*sendIndex));
-      rpc.executeRemoteAction("floatCallArduinoToPc", 18.11*sendIndex);
-      rpc.executeRemoteAction("intCallArduinoToPc", sendIndex, 27*sendIndex);
+      rpc.executeRemoteMethod("stringCallArduinoToPc", String(13*sendIndex));
+      rpc.executeRemoteMethod("floatCallArduinoToPc", 18.11*sendIndex);
+      rpc.executeRemoteMethod("intCallArduinoToPc", sendIndex, 27*sendIndex);
     } else {
-      rpc.executeRemoteAction("arduinoEnds");
+      rpc.executeRemoteMethod("arduinoEnds");
       sendingTestActive = false;
     }
   }

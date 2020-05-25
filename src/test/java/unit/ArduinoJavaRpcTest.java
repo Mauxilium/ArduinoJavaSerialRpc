@@ -8,7 +8,7 @@ package unit;
 
 import it.mauxilium.arduinojavaserialrpc.ArduinoJavaSerialRpc;
 import it.mauxilium.arduinojavaserialrpc.businesslogic.UsbHandler;
-import it.mauxilium.arduinojavaserialrpc.exception.ArduinoRpcActionFailsException;
+import it.mauxilium.arduinojavaserialrpc.exception.ArduinoRpcJavaFailsException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,7 +63,7 @@ public class ArduinoJavaRpcTest {
     }
 
     @Test
-    public void getCardNameOk() throws IOException, ArduinoRpcActionFailsException {
+    public void getCardNameOk() throws IOException, ArduinoRpcJavaFailsException {
         ArduinoJavaSerialRpc connector = new ArduinoJavaSerialRpc("TestPort", 9600);
         String card = connector.getCardName();
 
@@ -74,14 +74,14 @@ public class ArduinoJavaRpcTest {
     }
 
     @Test
-    public void getCardNameFails() throws IOException, ArduinoRpcActionFailsException {
-        Mockito.when(handler.getCardName()).thenThrow(ArduinoRpcActionFailsException.class);
+    public void getCardNameFails() throws IOException, ArduinoRpcJavaFailsException {
+        Mockito.when(handler.getCardName()).thenThrow(ArduinoRpcJavaFailsException.class);
 
         ArduinoJavaSerialRpc connector = new ArduinoJavaSerialRpc("TestPort", 9600);
         try {
             connector.getCardName();
             Assert.fail("Expected MauxArConnectorActionFailsException exception");
-        } catch (ArduinoRpcActionFailsException e) {
+        } catch (ArduinoRpcJavaFailsException e) {
             Mockito.verify(handler, VerificationModeFactory.atMost(1)).getCardName();
             Mockito.verify(handler, VerificationModeFactory.atLeast(1)).getCardName();
             Mockito.verifyNoMoreInteractions(handler);

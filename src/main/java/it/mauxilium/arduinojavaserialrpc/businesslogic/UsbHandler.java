@@ -8,7 +8,7 @@ package it.mauxilium.arduinojavaserialrpc.businesslogic;
 
 import gnu.io.*;
 import it.mauxilium.arduinojavaserialrpc.ArduinoJavaSerialRpc;
-import it.mauxilium.arduinojavaserialrpc.exception.ArduinoRpcActionFailsException;
+import it.mauxilium.arduinojavaserialrpc.exception.ArduinoRpcJavaFailsException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -169,7 +169,7 @@ public class UsbHandler {
         }
     }
 
-    public String getCardName() throws ArduinoRpcActionFailsException {
+    public String getCardName() throws ArduinoRpcJavaFailsException {
         checkConnectionReady();
         callingLock();
         synchronized (waitingResultLock) {
@@ -177,7 +177,7 @@ public class UsbHandler {
                 ProtocolToArduino.sendCommand("GetCardName", "", output);
             } catch (IOException ex) {
                 callingRelease();
-                throw new ArduinoRpcActionFailsException("Executing get card name", ex);
+                throw new ArduinoRpcJavaFailsException("Executing get card name", ex);
             }
             waitResult();
         }
@@ -185,7 +185,7 @@ public class UsbHandler {
         return (String) callingResult;
     }
 
-    public void executeAction(final String commandName) throws ArduinoRpcActionFailsException {
+    public void executeFunction(final String commandName) throws ArduinoRpcJavaFailsException {
         checkConnectionReady();
         callingLock();
         synchronized (waitingResultLock) {
@@ -193,15 +193,15 @@ public class UsbHandler {
                 ProtocolToArduino.sendCommand(commandName, output);
             } catch (IOException ex) {
                 callingRelease();
-                throw new ArduinoRpcActionFailsException("Executing "+commandName, ex);
+                throw new ArduinoRpcJavaFailsException("Executing "+commandName, ex);
             }
             waitResult();
         }
         callingRelease();
     }
 
-    public Integer executeAction(final String commandName, final int arg1, final int arg2)
-            throws ArduinoRpcActionFailsException {
+    public Integer executeFunction(final String commandName, final int arg1, final int arg2)
+            throws ArduinoRpcJavaFailsException {
         checkConnectionReady();
         callingLock();
         synchronized (waitingResultLock) {
@@ -209,7 +209,7 @@ public class UsbHandler {
                 ProtocolToArduino.sendCommand(commandName, arg1, arg2, output);
             } catch (IOException ex) {
                 callingRelease();
-                throw new ArduinoRpcActionFailsException("Executing "+commandName+"("+arg1+","+arg2+")", ex);
+                throw new ArduinoRpcJavaFailsException("Executing "+commandName+"("+arg1+","+arg2+")", ex);
             }
             waitResult();
         }
@@ -217,7 +217,7 @@ public class UsbHandler {
         return (Integer) callingResult;
     }
 
-    public String executeAction(final String commandName, final String argument) throws ArduinoRpcActionFailsException {
+    public String executeFunction(final String commandName, final String argument) throws ArduinoRpcJavaFailsException {
         checkConnectionReady();
         callingLock();
         synchronized (waitingResultLock) {
@@ -225,7 +225,7 @@ public class UsbHandler {
                 ProtocolToArduino.sendCommand(commandName, argument, output);
             } catch (IOException ex) {
                 callingRelease();
-                throw new ArduinoRpcActionFailsException("Executing "+commandName+"("+argument+")", ex);
+                throw new ArduinoRpcJavaFailsException("Executing "+commandName+"("+argument+")", ex);
             }
             waitResult();
         }
@@ -233,7 +233,7 @@ public class UsbHandler {
         return (String) callingResult;
     }
 
-    public float executeAction(final String commandName, final float argument) throws ArduinoRpcActionFailsException {
+    public float executeFunction(final String commandName, final float argument) throws ArduinoRpcJavaFailsException {
         checkConnectionReady();
         callingLock();
         synchronized (waitingResultLock) {
@@ -241,7 +241,7 @@ public class UsbHandler {
                 ProtocolToArduino.sendCommand(commandName, argument, output);
             } catch (IOException ex) {
                 callingRelease();
-                throw new ArduinoRpcActionFailsException("Executing "+commandName+"("+argument+")", ex);
+                throw new ArduinoRpcJavaFailsException("Executing "+commandName+"("+argument+")", ex);
             }
             waitResult();
         }
@@ -256,25 +256,25 @@ public class UsbHandler {
         }
     }
 
-    private void checkConnectionReady() throws ArduinoRpcActionFailsException {
+    private void checkConnectionReady() throws ArduinoRpcJavaFailsException {
         if (output == null) {
-            throw new ArduinoRpcActionFailsException("Arduino is not connected. Please use connect() before to perform Arduino activities.");
+            throw new ArduinoRpcJavaFailsException("Arduino is not connected. Please use connect() before to perform Arduino activities.");
         }
     }
 
-    private void callingLock() throws ArduinoRpcActionFailsException {
+    private void callingLock() throws ArduinoRpcJavaFailsException {
         try {
             callingLock.acquire();
         } catch (InterruptedException ex) {
-            throw new ArduinoRpcActionFailsException("Reserving priority in calling Arduino function", ex);
+            throw new ArduinoRpcJavaFailsException("Reserving priority in calling Arduino function", ex);
         }
     }
 
-    private void waitResult() throws ArduinoRpcActionFailsException {
+    private void waitResult() throws ArduinoRpcJavaFailsException {
         try {
             waitingResultLock.wait();
         } catch (InterruptedException ex) {
-            throw new ArduinoRpcActionFailsException("Waiting result from called Arduino function", ex);
+            throw new ArduinoRpcJavaFailsException("Waiting result from called Arduino function", ex);
         }
     }
 

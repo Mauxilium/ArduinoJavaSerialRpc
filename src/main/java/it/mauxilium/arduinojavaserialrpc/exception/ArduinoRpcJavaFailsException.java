@@ -7,18 +7,19 @@
 package it.mauxilium.arduinojavaserialrpc.exception;
 
 /**
+ * This exception is raised any time an error occurs in the Java side
  */
-public class ArduinoRpcActionFailsException extends ArduinoRpcException {
+public class ArduinoRpcJavaFailsException extends ArduinoRpcException {
 
-    public ArduinoRpcActionFailsException(final String errorTxt) {
+    public ArduinoRpcJavaFailsException(final String errorTxt) {
         super(errorTxt);
     }
 
-    public ArduinoRpcActionFailsException(final Exception exc) {
+    public ArduinoRpcJavaFailsException(final Exception exc) {
         super(exc);
     }
 
-    public ArduinoRpcActionFailsException(final String errorTxt, final Exception exc) {
+    public ArduinoRpcJavaFailsException(final String errorTxt, final Exception exc) {
         super(errorTxt, exc);
     }
 

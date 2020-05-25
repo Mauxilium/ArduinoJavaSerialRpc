@@ -25,7 +25,7 @@ Tbdf
 
 ## Arduino Side Installation
 It is required to:
- * download the Arduino library from: xyz
+ * download the Arduino library from: https://github.com/Mauxilium/ArduinoSerialRpc
  * expand it into your "library" path of Arduino Ide,
   or follows the manual installation section of https://www.arduino.cc/en/guide/libraries
   
