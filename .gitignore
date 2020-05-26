@@ -1,5 +1,7 @@
 .idea/
 *.iml
-./target
+target
+*.releaseBackup
+*.properties
 pom_maven_central.xml
 PUBLISH_MAVEN_CENTRAL.bat
