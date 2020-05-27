@@ -25,7 +25,7 @@ Tbdf
 
 ## Arduino Side Installation
 It is required to:
- * download the Arduino library from: https://github.com/Mauxilium/ArduinoSerialRpc
+ * download the Arduino library: [ArduinoSerialRpc](https://github.com/Mauxilium/ArduinoSerialRpc)
  * expand it into your "library" path of Arduino Ide,
   or follows the manual installation section of https://www.arduino.cc/en/guide/libraries
   
@@ -44,7 +44,6 @@ For Maven projects, it is only required to include the following dependency in y
     </dependency>
 </dependencies>
 ```
-NOTE: the maven central repository is not already available. Please clone this GitHub repository, compile it and publish into your local repository.
 
 ## Arduino Sketch basic example
 ```c++
@@ -118,6 +117,7 @@ java -Djava.library.path=RxTx\mfz-rxtx-2.2-20081207-win-x64 -cp target/test-clas
 ```
 
 ### Next steps
-* ArduinoJavaSerialRpc tutorial - A tutorial to discover a more complex use of library (On Working)
-* ArduinoSpring - The Spring library developed on top of ArduinoJavaSeriaRpc (On Working)
-* www.mauxilium.it - The reference site for my other projects (On Working)
+* [ArduinoJavaSerialRpcTutorial](https://github.com/Mauxilium/ArduinoJavaSerialRpcTutorial) - A tutorial to discover a more complex use of library
+* [ArduinoSpring](https://github.com/Mauxilium/ArduinoSpring) - A Spring library developed on top of ArduinoJavaSeriaRpc
+* [www.mauxilium.it](http://www.mauxilium.it) - The reference site for my open source projects
+
